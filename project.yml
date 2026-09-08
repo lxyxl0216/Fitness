@@ -19,3 +19,21 @@ targets:
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
         GENERATE_INFOPLIST_FILE: YES
         TARGETED_DEVICE_FAMILY: "1,2"
+  FitnessUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - path: Tests/FitnessUITests
+    dependencies:
+      - target: Fitness
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+schemes:
+  Fitness:
+    build:
+      targets:
+        Fitness: all
+    test:
+      targets:
+        - FitnessUITests

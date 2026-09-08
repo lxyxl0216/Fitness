@@ -31,7 +31,15 @@ struct TrendsView: View {
                                     BarMark(x: .value("日期", date, unit: .day), y: .value("热量", store.intake(on: date).calories))
                                         .foregroundStyle(Palette.accent).cornerRadius(4)
                                 }
-                            }.chartXScale(domain: dates[0]...Date()).frame(height: 170)
+                            }
+                            .chartXScale(domain: dates[0]...(Calendar.current.date(byAdding: .day, value: 1, to: dates[period - 1]) ?? Date()))
+                            .chartXAxis {
+                                AxisMarks(values: [dates[0], dates[period / 2], dates[period - 1]]) { _ in
+                                    AxisGridLine()
+                                    AxisValueLabel(format: .dateTime.month().day())
+                                }
+                            }
+                            .frame(height: 170)
                         }
                         nutrient("蛋白质", total.protein, goal: store.wellness.targets?.protein)
                         nutrient("碳水", total.carbs, goal: store.wellness.targets?.carbs)

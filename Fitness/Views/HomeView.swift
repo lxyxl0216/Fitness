@@ -126,11 +126,8 @@ struct TrainingCard: View {
     @Binding var training: Workout?
     @State private var error: String?
 
-    @State private var chosenTemplateID: UUID?
-
     private var planned: WorkoutTemplate? {
-        if let chosen = store.data.templates.first(where: { $0.id == chosenTemplateID }) { return chosen }
-        return store.wellness.schedule == nil ? store.data.templates.first : store.scheduledTemplate(on: date)
+        store.wellness.schedule == nil ? store.data.templates.first : store.scheduledTemplate(on: date)
     }
 
     var body: some View {
@@ -161,14 +158,16 @@ struct TrainingCard: View {
                     }
                 }
                 if store.data.draft == nil && !store.data.templates.isEmpty {
-                    Menu("选择其他模板") {
+                    Menu("用其他模板开始") {
                         ForEach(store.data.templates) { template in
-                            Button(template.name) { chosenTemplateID = template.id }
+                            Button(template.name) {
+                                do { try store.start(template: template); training = store.data.draft }
+                                catch { self.error = error.localizedDescription }
+                            }
                         }
-                    }.font(.subheadline).frame(minHeight: 44)
+                    }.font(.subheadline).frame(minHeight: 44).disabled(!Calendar.current.isDateInToday(date))
                 }
             }
         }.fitnessError($error)
-        .onChange(of: date) { _, _ in chosenTemplateID = nil }
     }
 }

@@ -16,6 +16,7 @@ final class FitnessUITests: XCTestCase {
         weight.tap()
         weight.typeText(XCUIKeyboardKey.delete.rawValue + "60")
         app.buttons["complete-bench-0"].tap()
+        XCTAssertTrue(app.staticTexts["1 组完成"].waitForExistence(timeout: 10))
         capture("02-训练记录")
         app.buttons["pauseTraining"].tap()
         app.terminate()

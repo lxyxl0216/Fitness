@@ -19,7 +19,7 @@ struct MealPlansView: View {
                             Text(plan.name).font(.headline)
                             Text("\(plan.items.count) 项食物 / \(plan.nutrition.calories.fitnessText) kcal")
                                 .font(.caption).foregroundStyle(Palette.muted)
-                        }
+                        }.frame(maxWidth: .infinity, alignment: .leading).contentShape(Rectangle())
                     }.buttonStyle(.plain)
                     if store.wellness.activeMealPlanID == plan.id {
                         Label("当前餐单", systemImage: "checkmark.circle.fill").foregroundStyle(Palette.accent)
@@ -82,7 +82,7 @@ struct MealPlanEditor: View {
                             }
                             plan.items.append(PlannedFood(food: food, servings: amount, meal: meal))
                         } label: {
-                            HStack { FoodLabel(food: food); Spacer(); Image(systemName: "plus.circle") }
+                            HStack { FoodLabel(food: food); Spacer(); Image(systemName: "plus.circle") }.contentShape(Rectangle())
                         }.buttonStyle(.plain).accessibilityIdentifier("planFood-\(food.name)")
                     }
                     if store.wellness.foods.isEmpty { Text("请先在「我的食物」添加食品标签。") }
@@ -126,7 +126,7 @@ struct ShoppingView: View {
                                     Text("\(item.servings.fitnessText) 份，每份 \(item.food.servingName)")
                                         .font(.caption).foregroundStyle(Palette.muted)
                                 }
-                            }
+                            }.frame(maxWidth: .infinity, alignment: .leading).contentShape(Rectangle())
                         }.buttonStyle(.plain)
                     }
                 }

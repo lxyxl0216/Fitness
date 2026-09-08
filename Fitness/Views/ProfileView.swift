@@ -82,7 +82,7 @@ struct ProfileView: View {
                 Text(title).foregroundStyle(.primary)
                 Spacer()
                 Image(systemName: "chevron.right").font(.caption).foregroundStyle(Palette.muted)
-            }.frame(minHeight: 54)
+            }.frame(minHeight: 54).contentShape(Rectangle())
         }.buttonStyle(.plain)
     }
 }

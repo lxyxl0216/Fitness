@@ -34,6 +34,7 @@ final class FitnessUITests: XCTestCase {
         capture("03-历史详情")
         app.tabBars.buttons["我的"].tap()
         app.buttons["bodyData"].tap()
+        XCTAssertTrue(app.buttons["addBodyRecord"].waitForExistence(timeout: 10))
         app.buttons["addBodyRecord"].tap()
         let bodyWeight = app.textFields["bodyWeight"]
         XCTAssertTrue(bodyWeight.waitForExistence(timeout: 10))
@@ -74,6 +75,7 @@ final class FitnessUITests: XCTestCase {
         app.tabBars.buttons["我的"].tap()
         reveal(app.buttons["foodLibrary"], in: app)
         app.buttons["foodLibrary"].tap()
+        XCTAssertTrue(app.buttons["addFood"].waitForExistence(timeout: 10))
         app.buttons["addFood"].tap()
         enter("Test yogurt", field: "foodName", in: app)
         enter("120", field: "foodCalories", in: app)

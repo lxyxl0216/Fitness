@@ -63,7 +63,7 @@ struct BodyView: View {
                                     ].compactMap { $0 }.joined(separator: " · "))
                                     .font(.caption).foregroundStyle(.secondary)
                                 }
-                            }.foregroundStyle(.primary).padding(.vertical, 4)
+                            }.foregroundStyle(.primary).padding(.vertical, 4).contentShape(Rectangle())
                         }
                         .accessibilityIdentifier("bodyRecord")
                         .buttonStyle(.plain)

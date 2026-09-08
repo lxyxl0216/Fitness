@@ -61,7 +61,7 @@ struct FoodLabel: View {
                 Text("每份 \(food.servingName) / \(food.nutrition.calories.fitnessText) kcal")
                     .font(.caption).foregroundStyle(Palette.muted)
             }
-        }.padding(.vertical, 5)
+        }.frame(maxWidth: .infinity, alignment: .leading).padding(.vertical, 5).contentShape(Rectangle())
     }
 }
 
@@ -163,7 +163,7 @@ struct FoodLogger: View {
                         Button { selected = food.id } label: {
                             HStack { FoodLabel(food: food); Spacer()
                                 if selected == food.id { Image(systemName: "checkmark.circle.fill").foregroundStyle(Palette.accent) }
-                            }
+                            }.contentShape(Rectangle())
                         }.buttonStyle(.plain).accessibilityIdentifier("chooseFood-\(food.name)")
                     }
                     if store.wellness.foods.isEmpty {

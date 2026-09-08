@@ -20,7 +20,7 @@ struct PlansView: View {
                             .font(.subheadline).foregroundStyle(.secondary)
                         Text(template.exerciseIDs.compactMap { ExerciseCatalog.find($0)?.name }.joined(separator: " · "))
                             .font(.caption).foregroundStyle(.secondary)
-                    }.padding(.vertical, 6)
+                    }.frame(maxWidth: .infinity, alignment: .leading).padding(.vertical, 6).contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
                 .swipeActions {
@@ -117,7 +117,7 @@ struct TemplateEditor: View {
                                 }
                                 Spacer()
                                 Image(systemName: template.exerciseIDs.contains(exercise.id) ? "checkmark.circle.fill" : "plus.circle")
-                            }
+                            }.contentShape(Rectangle())
                         }
                         .buttonStyle(.plain)
                         .accessibilityIdentifier("exercise-\(exercise.id)")

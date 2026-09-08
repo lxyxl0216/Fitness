@@ -20,7 +20,8 @@ struct HomeView: View {
                 DatePicker("查看日期", selection: $selectedDate, in: ...Date(), displayedComponents: .date)
                     .labelsHidden().datePickerStyle(.compact).frame(maxWidth: 110)
             }
-            NutritionSummary(intake: store.intake(on: selectedDate), targets: store.wellness.targets)
+            NutritionSummary(intake: store.intake(on: selectedDate), targets: store.wellness.targets,
+                             title: Calendar.current.isDateInToday(selectedDate) ? "今日摄入" : "当日摄入")
             HStack {
                 if let target = store.wellness.targets {
                     let remaining = target.calories - store.intake(on: selectedDate).calories
@@ -125,8 +126,11 @@ struct TrainingCard: View {
     @Binding var training: Workout?
     @State private var error: String?
 
+    @State private var chosenTemplateID: UUID?
+
     private var planned: WorkoutTemplate? {
-        store.wellness.schedule == nil ? store.data.templates.first : store.scheduledTemplate(on: date)
+        if let chosen = store.data.templates.first(where: { $0.id == chosenTemplateID }) { return chosen }
+        return store.wellness.schedule == nil ? store.data.templates.first : store.scheduledTemplate(on: date)
     }
 
     var body: some View {
@@ -156,7 +160,15 @@ struct TrainingCard: View {
                             .font(.caption).foregroundStyle(Palette.muted)
                     }
                 }
+                if store.data.draft == nil && !store.data.templates.isEmpty {
+                    Menu("选择其他模板") {
+                        ForEach(store.data.templates) { template in
+                            Button(template.name) { chosenTemplateID = template.id }
+                        }
+                    }.font(.subheadline).frame(minHeight: 44)
+                }
             }
         }.fitnessError($error)
+        .onChange(of: date) { _, _ in chosenTemplateID = nil }
     }
 }

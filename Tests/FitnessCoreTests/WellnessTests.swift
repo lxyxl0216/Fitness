@@ -70,9 +70,10 @@ final class WellnessTests: XCTestCase {
 
     func testMealPlanLogsOnlySelectedMealAndShoppingMergesPortions() throws {
         let store = try store()
+        let item = food
         let plan = MealPlan(name: "测试餐单", items: [
-            PlannedFood(food: food, servings: 1, meal: .breakfast),
-            PlannedFood(food: food, servings: 2, meal: .dinner)
+            PlannedFood(food: item, servings: 1, meal: .breakfast),
+            PlannedFood(food: item, servings: 2, meal: .dinner)
         ])
         try store.saveMealPlan(plan)
         try store.activateMealPlan(id: plan.id)

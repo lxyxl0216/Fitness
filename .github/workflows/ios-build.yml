@@ -63,6 +63,15 @@ jobs:
             xcrun xcresulttool export attachments --path build/FitnessTests.xcresult --output-path build/screenshots
           fi
 
+      - name: Capture dark appearance
+        run: |
+          DEVICE_ID=$(xcrun simctl list devices available -j | python3 -c 'import json,sys; d=json.load(sys.stdin); print(next(x["udid"] for devices in d["devices"].values() for x in devices if x["name"].startswith("iPhone")))')
+          xcrun simctl ui "$DEVICE_ID" appearance dark
+          xcrun simctl launch "$DEVICE_ID" com.xsj.Fitness
+          sleep 3
+          mkdir -p build/screenshots
+          xcrun simctl io "$DEVICE_ID" screenshot build/screenshots/dark-home.png
+
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4

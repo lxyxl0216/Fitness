@@ -80,10 +80,11 @@ extension Date {
 struct NutritionSummary: View {
     var intake: NutritionValues
     var targets: NutritionValues?
+    var title = "今日摄入"
     var body: some View {
         Surface {
             VStack(alignment: .leading, spacing: 22) {
-                Text("今日摄入").font(.subheadline.weight(.medium)).foregroundStyle(Palette.muted)
+                Text(title).font(.subheadline.weight(.medium)).foregroundStyle(Palette.muted)
                 ViewThatFits(in: .horizontal) {
                     HStack(alignment: .center, spacing: 20) { energy; Spacer(); ring }
                     VStack(alignment: .leading, spacing: 16) { energy; ring }

@@ -35,7 +35,7 @@ struct BodyView: View {
                             LineMark(x: .value("日期", record.date), y: .value("体重", record.weight))
                             PointMark(x: .value("日期", record.date), y: .value("体重", record.weight))
                         }
-                        .foregroundStyle(.orange)
+                        .foregroundStyle(Palette.accent)
                         .chartYScale(domain: .automatic(includesZero: false))
                         .frame(height: 180)
                         .accessibilityLabel("最近 \(chartRecords.count) 条体重记录，最新 \(latest.weight.fitnessText) 千克")
@@ -66,6 +66,7 @@ struct BodyView: View {
                             }.foregroundStyle(.primary).padding(.vertical, 4)
                         }
                         .accessibilityIdentifier("bodyRecord")
+                        .buttonStyle(.plain)
                         .swipeActions {
                             Button("删除", role: .destructive) { deleting = record }
                         }
@@ -79,6 +80,7 @@ struct BodyView: View {
             }
         }
         .navigationTitle("身体数据")
+        .scrollContentBackground(.hidden).background(Palette.canvas)
         .sheet(item: $editing) { record in BodyEditor(record: record) }
         .confirmationDialog("删除这条身体记录？", isPresented: Binding(
             get: { deleting != nil }, set: { if !$0 { deleting = nil } }

@@ -18,7 +18,7 @@ struct StatTile: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(16)
-        .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 18))
+        .background(Palette.surface, in: RoundedRectangle(cornerRadius: 18))
         .accessibilityElement(children: .combine)
     }
 }

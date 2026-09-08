@@ -26,6 +26,7 @@ struct HistoryView: View {
             }
         }
         .navigationTitle("训练历史")
+        .scrollContentBackground(.hidden).background(Palette.canvas)
         .confirmationDialog("删除这次训练？", isPresented: Binding(
             get: { deleting != nil }, set: { if !$0 { deleting = nil } }
         ), titleVisibility: .visible) {
@@ -57,7 +58,8 @@ struct WorkoutDetailView: View {
                             Text("第 \(index + 1) 组").foregroundStyle(.secondary)
                             Spacer()
                             Text("\(set.weight) kg × \(set.reps) 次").monospacedDigit()
-                            Image(systemName: "checkmark.circle.fill").foregroundStyle(.orange)
+                            if let rpe = set.rpe { Text("RPE \(rpe.fitnessText)").font(.caption).foregroundStyle(Palette.muted) }
+                            Image(systemName: "checkmark.circle.fill").foregroundStyle(Palette.accent)
                         }
                     }
                 }

@@ -20,7 +20,8 @@ struct ContentView: View {
                 ProgressView("读取记录…")
             }
         }
-        .tint(.orange)
+        .tint(Palette.accent)
+        .environment(\.locale, Locale(identifier: "zh_CN"))
         .task { if store == nil { load() } }
     }
 
@@ -41,12 +42,12 @@ private struct AppTabs: View {
         TabView {
             NavigationStack { HomeView() }
                 .tabItem { Label("今日", systemImage: "sun.max") }
-            NavigationStack { PlansView() }
-                .tabItem { Label("计划", systemImage: "list.bullet.clipboard") }
-            NavigationStack { HistoryView() }
-                .tabItem { Label("历史", systemImage: "clock.arrow.circlepath") }
-            NavigationStack { BodyView() }
-                .tabItem { Label("身体", systemImage: "figure.stand") }
+            NavigationStack { TrainingHub() }
+                .tabItem { Label("训练", systemImage: "dumbbell") }
+            NavigationStack { TrendsView() }
+                .tabItem { Label("趋势", systemImage: "chart.xyaxis.line") }
+            NavigationStack { ProfileView() }
+                .tabItem { Label("我的", systemImage: "person.crop.circle") }
         }
     }
 }

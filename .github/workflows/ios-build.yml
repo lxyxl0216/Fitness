@@ -14,7 +14,7 @@ jobs:
   build:
     name: Build iOS Simulator app
     runs-on: macos-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
 
     steps:
       - name: Check out source
@@ -46,6 +46,8 @@ jobs:
       - name: Run iPhone interaction tests
         run: |
           DEVICE_ID=$(xcrun simctl list devices available -j | python3 -c 'import json,sys; d=json.load(sys.stdin); print(next(x["udid"] for devices in d["devices"].values() for x in devices if x["name"].startswith("iPhone")))')
+          xcrun simctl boot "$DEVICE_ID" || true
+          xcrun simctl bootstatus "$DEVICE_ID" -b
           xcodebuild test \
             -project Fitness.xcodeproj \
             -scheme Fitness \
@@ -67,5 +69,14 @@ jobs:
         with:
           name: Fitness-test-results
           path: build/
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Fitness-screenshots
+          path: build/screenshots/
           if-no-files-found: ignore
           retention-days: 7

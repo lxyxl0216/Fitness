@@ -21,11 +21,15 @@ struct TrainingSet: Codable, Identifiable, Equatable {
     var weight = "0"
     var reps = "10"
     var isCompleted = false
+    var rpe: Double?
 
     func validate() throws {
+        if let rpe, !rpe.isFinite || !(1...10).contains(rpe) {
+            throw FitnessError.invalid("RPE 需为 1-10，或不填写。")
+        }
         guard let kg = InputNumber.decimal(weight), kg.isFinite, (0...1000).contains(kg),
               let count = Int(reps.trimmingCharacters(in: .whitespaces)), (1...999).contains(count) else {
-            throw FitnessError.invalid("重量需为 0–1000 kg，次数需为 1–999 的整数。自重动作重量填 0。")
+            throw FitnessError.invalid("重量需为 0-1000 kg，次数需为 1-999 的整数。自重动作重量填 0。")
         }
     }
 
@@ -40,6 +44,13 @@ struct WorkoutTemplate: Codable, Identifiable, Equatable {
     var name: String
     var exerciseIDs: [String]
     var setCount = 3
+    var prescriptions: [String: ExercisePrescription]?
+
+    func prescription(for id: String) -> ExercisePrescription {
+        prescriptions?[id] ?? ExercisePrescription(reps: Array(repeating: 10, count: setCount))
+    }
+
+    var plannedSetCount: Int { exerciseIDs.reduce(0) { $0 + prescription(for: $1).reps.count } }
 }
 
 struct LoggedExercise: Codable, Identifiable, Equatable {
@@ -47,6 +58,8 @@ struct LoggedExercise: Codable, Identifiable, Equatable {
     var exerciseID: String
     var name: String
     var sets: [TrainingSet]
+    var restSeconds: Int?
+    var targetRPE: Double?
 }
 
 struct Workout: Codable, Identifiable, Equatable {
@@ -55,6 +68,7 @@ struct Workout: Codable, Identifiable, Equatable {
     var startedAt = Date()
     var finishedAt: Date?
     var exercises: [LoggedExercise]
+    var restUntil: Date?
 
     var completedSetCount: Int {
         exercises.reduce(0) { $0 + $1.sets.filter(\.isCompleted).count }
@@ -95,4 +109,5 @@ struct FitnessData: Codable {
     var workouts: [Workout] = []
     var bodyRecords: [BodyRecord] = []
     var draft: Workout?
+    var wellness: WellnessData?
 }

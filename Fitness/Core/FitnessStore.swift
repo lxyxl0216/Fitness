@@ -10,7 +10,7 @@ final class FitnessStore {
         self.url = url
         if FileManager.default.fileExists(atPath: url.path) {
             data = try JSONDecoder().decode(FitnessData.self, from: Data(contentsOf: url))
-            guard data.version == 1 else {
+            guard (1...2).contains(data.version) else {
                 throw FitnessError.invalid("此数据文件由更新版本创建，请更新 App 后重试。")
             }
         } else {
@@ -18,9 +18,10 @@ final class FitnessStore {
         }
     }
 
-    private func commit(_ change: (inout FitnessData) throws -> Void) throws {
+    func commit(_ change: (inout FitnessData) throws -> Void) throws {
         var next = data
         try change(&next)
+        next.version = 2
         let encoded = try JSONEncoder().encode(next)
         try FileManager.default.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
         try encoded.write(to: url, options: .atomic)
@@ -33,11 +34,13 @@ final class FitnessStore {
         let exercises = template.exerciseIDs.compactMap { id -> LoggedExercise? in
             guard let exercise = ExerciseCatalog.find(id) else { return nil }
             let previous = previousSets(for: id)
-            let sets = (0..<template.setCount).map { index -> TrainingSet in
-                guard let previous, index < previous.count else { return TrainingSet() }
-                return TrainingSet(weight: previous[index].weight, reps: previous[index].reps)
+            let prescription = template.prescription(for: id)
+            let sets = prescription.reps.enumerated().map { index, reps -> TrainingSet in
+                let weight = previous.flatMap { index < $0.count ? $0[index].weight : nil } ?? "0"
+                return TrainingSet(weight: weight, reps: String(reps))
             }
-            return LoggedExercise(exerciseID: id, name: exercise.name, sets: sets)
+            return LoggedExercise(exerciseID: id, name: exercise.name, sets: sets,
+                                  restSeconds: prescription.restSeconds, targetRPE: prescription.targetRPE)
         }
         try commit { $0.draft = Workout(name: template.name, exercises: exercises) }
     }
@@ -63,6 +66,7 @@ final class FitnessStore {
             return completed.sets.isEmpty ? nil : completed
         }
         workout.finishedAt = Date()
+        workout.restUntil = nil
         try commit {
             $0.workouts.insert(workout, at: 0)
             $0.draft = nil
@@ -83,8 +87,9 @@ final class FitnessStore {
               !template.exerciseIDs.isEmpty, template.exerciseIDs.allSatisfy({ ExerciseCatalog.find($0) != nil }),
               Set(template.exerciseIDs).count == template.exerciseIDs.count,
               (1...10).contains(template.setCount) else {
-            throw FitnessError.invalid("请填写计划名称，选择至少一个不重复的动作，每个动作设置 1–10 组。")
+            throw FitnessError.invalid("请填写计划名称，选择至少一个不重复的动作，默认组数为 1-10。")
         }
+        for id in template.exerciseIDs { try template.prescription(for: id).validate() }
     }
 
     func saveTemplate(_ template: WorkoutTemplate) throws {

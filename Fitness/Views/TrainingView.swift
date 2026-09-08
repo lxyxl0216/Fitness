@@ -14,6 +14,21 @@ struct TrainingView: View {
             Group {
                 if let draft = store.data.draft {
                     List {
+                        if let end = draft.restUntil {
+                            Section {
+                                TimelineView(.periodic(from: Date(), by: 1)) { context in
+                                    HStack {
+                                        Label(end > context.date ? "组间休息" : "休息结束", systemImage: "timer")
+                                        Spacer()
+                                        Text("\(max(0, Int(ceil(end.timeIntervalSince(context.date))))) 秒")
+                                            .font(.headline.monospacedDigit()).foregroundStyle(Palette.accent)
+                                        Button("结束") {
+                                            do { try store.setRestEnd(nil) } catch { self.error = error.localizedDescription }
+                                        }
+                                    }
+                                }
+                            }
+                        }
                         Section {
                             HStack {
                                 Label("\(draft.completedSetCount) 组完成", systemImage: "checkmark.circle")
@@ -57,6 +72,10 @@ struct TrainingView: View {
                                                 guard let e = workout.exercises.firstIndex(where: { $0.id == exercise.id }),
                                                       let s = workout.exercises[e].sets.firstIndex(where: { $0.id == set.id }) else { return }
                                                 workout.exercises[e].sets[s].isCompleted.toggle()
+                                                if workout.exercises[e].sets[s].isCompleted {
+                                                    let seconds = workout.exercises[e].restSeconds ?? 90
+                                                    workout.restUntil = seconds > 0 ? Date().addingTimeInterval(Double(seconds)) : nil
+                                                }
                                             }
                                         } label: {
                                             Image(systemName: set.isCompleted ? "checkmark.circle.fill" : "circle")
@@ -76,6 +95,15 @@ struct TrainingView: View {
                                             }
                                         }
                                     }
+                                    Menu {
+                                        Button("不记录 RPE") { setRPE(nil, exerciseID: exercise.id, setID: set.id) }
+                                        ForEach(1...10, id: \.self) { value in
+                                            Button("RPE \(value)") { setRPE(Double(value), exerciseID: exercise.id, setID: set.id) }
+                                        }
+                                    } label: {
+                                        Text("第 \(index + 1) 组 RPE：\(set.rpe.map { $0.fitnessText } ?? "未记录")")
+                                            .font(.caption).frame(minHeight: 30)
+                                    }
                                 }
                                 Button {
                                     change { workout in
@@ -84,13 +112,16 @@ struct TrainingView: View {
                                         workout.exercises[e].sets.append(TrainingSet(weight: previous?.weight ?? "0", reps: previous?.reps ?? "10"))
                                     }
                                 } label: { Label("添加一组", systemImage: "plus") }
-                            } header: { Text(exercise.name) }
+                            } header: {
+                                Text(exercise.name + (exercise.targetRPE.map { " / 目标 RPE \($0.fitnessText)" } ?? ""))
+                            }
                         }
                         Section {
                             Button("放弃本次训练", role: .destructive) { confirmation = .discard }
                         }
                     }
                     .scrollDismissesKeyboard(.interactively)
+                    .scrollContentBackground(.hidden).background(Palette.canvas)
                     .navigationTitle(draft.name)
                 } else {
                     ContentUnavailableView("训练已保存", systemImage: "checkmark.circle")
@@ -137,6 +168,14 @@ struct TrainingView: View {
         edit(&draft)
         do { try store.updateDraft(draft) }
         catch { self.error = error.localizedDescription }
+    }
+
+    private func setRPE(_ value: Double?, exerciseID: UUID, setID: UUID) {
+        change { workout in
+            guard let e = workout.exercises.firstIndex(where: { $0.id == exerciseID }),
+                  let s = workout.exercises[e].sets.firstIndex(where: { $0.id == setID }) else { return }
+            workout.exercises[e].sets[s].rpe = value
+        }
     }
 
     private func valueBinding(_ exerciseID: UUID, _ setID: UUID, _ keyPath: WritableKeyPath<TrainingSet, String>) -> Binding<String> {

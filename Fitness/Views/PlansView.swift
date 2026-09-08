@@ -16,12 +16,13 @@ struct PlansView: View {
                 Button { editing = template } label: {
                     VStack(alignment: .leading, spacing: 8) {
                         Text(template.name).font(.headline).foregroundStyle(.primary)
-                        Text("\(template.exerciseIDs.count) 个动作 · 每个动作 \(template.setCount) 组")
+                        Text("\(template.exerciseIDs.count) 个动作 / 共 \(template.plannedSetCount) 组")
                             .font(.subheadline).foregroundStyle(.secondary)
                         Text(template.exerciseIDs.compactMap { ExerciseCatalog.find($0)?.name }.joined(separator: " · "))
                             .font(.caption).foregroundStyle(.secondary)
                     }.padding(.vertical, 6)
                 }
+                .buttonStyle(.plain)
                 .swipeActions {
                     Button("删除", role: .destructive) { deleting = template }
                 }
@@ -34,6 +35,7 @@ struct PlansView: View {
             }
         }
         .navigationTitle("训练计划")
+        .scrollContentBackground(.hidden).background(Palette.canvas)
         .toolbar {
             Button { editing = WorkoutTemplate(name: "", exerciseIDs: []) } label: {
                 Image(systemName: "plus")
@@ -71,7 +73,7 @@ struct TemplateEditor: View {
         NavigationStack {
             Form {
                 Section("计划设置") {
-                    TextField("例如：我的上肢日", text: $template.name)
+                    TextField("计划名称", text: $template.name)
                         .accessibilityIdentifier("templateName")
                     Stepper("每个动作 \(template.setCount) 组", value: $template.setCount, in: 1...10)
                 }
@@ -84,6 +86,19 @@ struct TemplateEditor: View {
                         .onDelete { template.exerciseIDs.remove(atOffsets: $0) }
                     }
                     .environment(\.editMode, .constant(.active))
+                }
+                Section("逐组目标与休息") {
+                    ForEach(template.exerciseIDs, id: \.self) { id in
+                        NavigationLink(ExerciseCatalog.find(id)?.name ?? id) {
+                            PrescriptionEditor(prescription: Binding(
+                                get: { template.prescription(for: id) },
+                                set: { value in
+                                    if template.prescriptions == nil { template.prescriptions = [:] }
+                                    template.prescriptions?[id] = value
+                                }
+                            ), name: ExerciseCatalog.find(id)?.name ?? id)
+                        }
+                    }
                 }
                 Section("动作库 · 点击添加或移除") {
                     ForEach(filtered) { exercise in
@@ -104,11 +119,13 @@ struct TemplateEditor: View {
                                 Image(systemName: template.exerciseIDs.contains(exercise.id) ? "checkmark.circle.fill" : "plus.circle")
                             }
                         }
+                        .buttonStyle(.plain)
                         .accessibilityIdentifier("exercise-\(exercise.id)")
                     }
                 }
             }
             .searchable(text: $query, prompt: "搜索动作、肌群或器械")
+            .scrollContentBackground(.hidden).background(Palette.canvas)
             .navigationTitle("编辑计划").navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) { Button("取消") { dismiss() } }

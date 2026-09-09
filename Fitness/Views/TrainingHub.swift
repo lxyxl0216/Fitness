@@ -77,7 +77,7 @@ struct WeekStrip: View {
                             Text(day.formatted(.dateTime.weekday(.narrow).locale(Locale(identifier: "zh_CN")))).font(.caption)
                             Text(day.formatted(.dateTime.day())).font(.subheadline.bold())
                         }.frame(maxWidth: .infinity).frame(minHeight: 66)
-                            .foregroundStyle(selected ? Color.white : Palette.muted)
+                            .foregroundStyle(selected ? Palette.buttonText : Palette.muted)
                             .background(selected ? Palette.button : Palette.surface, in: RoundedRectangle(cornerRadius: 14))
                     }.buttonStyle(.plain).accessibilityLabel(day.dayText)
                 }
@@ -166,7 +166,7 @@ struct ExerciseLibraryView: View {
                     ForEach(["全部"] + ExerciseCatalog.muscles, id: \.self) { item in
                         Button { muscle = item } label: {
                             Text(item).font(.subheadline.weight(.medium)).padding(.horizontal, 14).frame(minHeight: 44)
-                                .foregroundStyle(muscle == item ? Color.white : Palette.muted)
+                                .foregroundStyle(muscle == item ? Palette.buttonText : Palette.muted)
                                 .background(muscle == item ? Palette.button : Palette.surface, in: Capsule())
                         }.buttonStyle(.plain)
                     }

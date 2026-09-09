@@ -3,6 +3,7 @@ import UniformTypeIdentifiers
 
 struct ProfileView: View {
     @Environment(FitnessStore.self) private var store
+    @AppStorage(AppAppearance.storageKey) private var appearance = AppAppearance.light.rawValue
     @State private var exporting = false
     @State private var backup: FitnessBackup?
     @State private var error: String?
@@ -35,6 +36,18 @@ struct ProfileView: View {
                         Text("根据身体档案与最近体重估算，不等于每日饮食目标。").font(.caption).foregroundStyle(Palette.muted)
                         Link("计算依据 · Mifflin–St Jeor", destination: URL(string: "https://pubmed.ncbi.nlm.nih.gov/2305711/")!).font(.caption)
                     }
+                }
+            }
+            Surface {
+                VStack(alignment: .leading, spacing: 14) {
+                    SectionHeading(title: "界面外观", subtitle: "选择后立即生效，并在下次打开时保留")
+                    Picker("界面外观", selection: $appearance) {
+                        ForEach(AppAppearance.allCases) { mode in
+                            Text(mode.title).tag(mode.rawValue)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                    .accessibilityIdentifier("appearanceMode")
                 }
             }
             Surface {

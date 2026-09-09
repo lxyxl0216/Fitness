@@ -1,6 +1,30 @@
 import XCTest
 
 final class FitnessUITests: XCTestCase {
+    func testAppearanceModePersistsAcrossRelaunch() throws {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments += ["-AppleLanguages", "(zh-Hans)", "-AppleLocale", "zh_CN"]
+        app.launch()
+        XCTAssertTrue(app.tabBars.buttons["我的"].waitForExistence(timeout: 15))
+        app.tabBars.buttons["我的"].tap()
+
+        let appearance = app.segmentedControls["appearanceMode"]
+        reveal(appearance, in: app)
+        appearance.buttons["深色"].tap()
+        XCTAssertTrue(appearance.buttons["深色"].isSelected)
+        capture("00-深色模式")
+
+        app.terminate()
+        app.launch()
+        app.tabBars.buttons["我的"].tap()
+        let persistedAppearance = app.segmentedControls["appearanceMode"]
+        reveal(persistedAppearance, in: app)
+        XCTAssertTrue(persistedAppearance.buttons["深色"].isSelected)
+        persistedAppearance.buttons["浅色"].tap()
+        XCTAssertTrue(persistedAppearance.buttons["浅色"].isSelected)
+    }
+
     func testTrainingAndBodyRecordsSurviveRelaunch() throws {
         continueAfterFailure = false
         let app = XCUIApplication()

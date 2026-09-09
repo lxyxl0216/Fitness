@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct ContentView: View {
+    @AppStorage(AppAppearance.storageKey) private var appearance = AppAppearance.light.rawValue
     @State private var store: FitnessStore?
     @State private var loadError: String?
 
@@ -21,6 +22,7 @@ struct ContentView: View {
             }
         }
         .tint(Palette.accent)
+        .preferredColorScheme(AppAppearance(rawValue: appearance)?.colorScheme ?? .light)
         .environment(\.locale, Locale(identifier: "zh_CN"))
         .task { if store == nil { load() } }
     }

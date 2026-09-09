@@ -32,7 +32,7 @@ struct MuscleAtlasView: View {
                     ForEach(ExerciseCatalog.muscles, id: \.self) { muscle in
                         Button { selection = muscle } label: {
                             Text(muscle).font(.subheadline.weight(.medium)).padding(.horizontal, 16).frame(minHeight: 44)
-                                .foregroundStyle(selection == muscle ? Color.white : Palette.muted)
+                                .foregroundStyle(selection == muscle ? Palette.buttonText : Palette.muted)
                                 .background(selection == muscle ? Palette.button : Palette.surface, in: Capsule())
                         }.buttonStyle(.plain).accessibilityIdentifier("muscle-\(muscle)")
                     }
@@ -96,10 +96,10 @@ private struct MuscleSceneView: UIViewRepresentable {
             scene.rootNode.enumerateChildNodes { node, _ in
                 guard node.categoryBitMask == 2, let muscle = node.name else { return }
                 node.geometry?.firstMaterial?.diffuse.contents = muscle == self.selection.wrappedValue
-                    ? UIColor(red: 0.05, green: 0.72, blue: 0.49, alpha: 1)
+                    ? UIColor(red: 0.788, green: 0.659, blue: 0.298, alpha: 1)
                     : HumanScene.color(for: muscle)
                 node.geometry?.firstMaterial?.emission.contents = muscle == self.selection.wrappedValue
-                    ? UIColor(red: 0.01, green: 0.18, blue: 0.11, alpha: 1)
+                    ? UIColor(red: 0.20, green: 0.12, blue: 0.04, alpha: 1)
                     : UIColor.black
             }
         }
@@ -129,7 +129,7 @@ private enum HumanScene {
         fill.light = SCNLight()
         fill.light?.type = .omni
         fill.light?.intensity = 420
-        fill.light?.color = UIColor(red: 0.55, green: 0.78, blue: 0.68, alpha: 1)
+        fill.light?.color = UIColor(red: 0.788, green: 0.659, blue: 0.298, alpha: 1)
         fill.position = SCNVector3(4, 2, 4)
         root.addChildNode(fill)
         let back = SCNNode()
@@ -173,12 +173,12 @@ private enum HumanScene {
 
     static func color(for muscle: String) -> UIColor {
         switch muscle {
-        case "胸部": return UIColor(red: 0.80, green: 0.30, blue: 0.25, alpha: 1)
-        case "背部": return UIColor(red: 0.55, green: 0.20, blue: 0.18, alpha: 1)
-        case "肩部": return UIColor(red: 0.92, green: 0.43, blue: 0.25, alpha: 1)
-        case "手臂": return UIColor(red: 0.70, green: 0.29, blue: 0.31, alpha: 1)
-        case "核心": return UIColor(red: 0.86, green: 0.49, blue: 0.28, alpha: 1)
-        default: return UIColor(red: 0.62, green: 0.24, blue: 0.25, alpha: 1)
+        case "胸部": return UIColor(red: 0.549, green: 0.184, blue: 0.243, alpha: 1)
+        case "背部": return UIColor(red: 0.38, green: 0.12, blue: 0.17, alpha: 1)
+        case "肩部": return UIColor(red: 0.68, green: 0.27, blue: 0.31, alpha: 1)
+        case "手臂": return UIColor(red: 0.48, green: 0.22, blue: 0.27, alpha: 1)
+        case "核心": return UIColor(red: 0.64, green: 0.39, blue: 0.24, alpha: 1)
+        default: return UIColor(red: 0.45, green: 0.16, blue: 0.21, alpha: 1)
         }
     }
 
@@ -213,7 +213,7 @@ private enum HumanScene {
 
     private static func material(muscle: String?, neutral: Bool) -> SCNMaterial {
         let material = SCNMaterial()
-        material.diffuse.contents = neutral ? UIColor(red: 0.76, green: 0.65, blue: 0.58, alpha: 1) : color(for: muscle ?? "")
+        material.diffuse.contents = neutral ? UIColor(red: 0.62, green: 0.60, blue: 0.57, alpha: 1) : color(for: muscle ?? "")
         return material
     }
 }

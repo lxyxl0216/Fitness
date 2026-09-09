@@ -1,20 +1,34 @@
 import SwiftUI
 
+enum AppAppearance: String, CaseIterable, Identifiable {
+    static let storageKey = "appearanceMode"
+
+    case light
+    case dark
+
+    var id: String { rawValue }
+    var title: String { self == .light ? "浅色" : "深色" }
+    var colorScheme: ColorScheme { self == .light ? .light : .dark }
+}
+
 enum Palette {
     static let accent = Color(uiColor: UIColor { $0.userInterfaceStyle == .dark
-        ? UIColor(red: 0.44, green: 0.83, blue: 0.67, alpha: 1)
-        : UIColor(red: 0.02, green: 0.36, blue: 0.27, alpha: 1) })
-    static let button = Color(red: 0.02, green: 0.33, blue: 0.25)
+        ? UIColor(red: 0.788, green: 0.659, blue: 0.298, alpha: 1)
+        : UIColor(red: 0.549, green: 0.184, blue: 0.243, alpha: 1) })
+    static let button = Color(red: 0.549, green: 0.184, blue: 0.243)
+    static let buttonText = Color(red: 0.847, green: 0.831, blue: 0.800)
     static let canvas = Color(uiColor: UIColor { $0.userInterfaceStyle == .dark
-        ? UIColor(red: 0.065, green: 0.09, blue: 0.08, alpha: 1)
-        : UIColor(red: 0.94, green: 0.96, blue: 0.95, alpha: 1) })
+        ? UIColor(red: 0.055, green: 0.055, blue: 0.071, alpha: 1)
+        : UIColor(red: 0.961, green: 0.957, blue: 0.945, alpha: 1) })
     static let surface = Color(uiColor: UIColor { $0.userInterfaceStyle == .dark
-        ? UIColor(red: 0.105, green: 0.14, blue: 0.125, alpha: 1)
-        : UIColor(red: 0.985, green: 0.99, blue: 0.985, alpha: 1) })
-    static let ink = Color.primary
+        ? UIColor(red: 0.133, green: 0.133, blue: 0.125, alpha: 1)
+        : UIColor.white })
+    static let ink = Color(uiColor: UIColor { $0.userInterfaceStyle == .dark
+        ? UIColor(red: 0.847, green: 0.831, blue: 0.800, alpha: 1)
+        : UIColor(red: 0.055, green: 0.055, blue: 0.071, alpha: 1) })
     static let muted = Color(uiColor: UIColor { $0.userInterfaceStyle == .dark
-        ? UIColor(red: 0.68, green: 0.75, blue: 0.71, alpha: 1)
-        : UIColor(red: 0.34, green: 0.41, blue: 0.37, alpha: 1) })
+        ? UIColor(red: 0.635, green: 0.616, blue: 0.584, alpha: 1)
+        : UIColor(red: 0.373, green: 0.361, blue: 0.380, alpha: 1) })
 }
 
 struct Surface<Content: View>: View {
@@ -28,7 +42,7 @@ struct Surface<Content: View>: View {
 struct PrimaryButton: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label.font(.headline).frame(maxWidth: .infinity, minHeight: 48)
-            .foregroundStyle(Color.white).background(Palette.button, in: Capsule())
+            .foregroundStyle(Palette.buttonText).background(Palette.button, in: Capsule())
             .opacity(configuration.isPressed ? 0.8 : 1)
     }
 }

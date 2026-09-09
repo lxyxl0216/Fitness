@@ -10,7 +10,7 @@
 
 [动作 GIF 演示](docs/screenshots/exercise-gif.png) · [训练计划截图](docs/screenshots/training.png) · [营养趋势截图](docs/screenshots/trends.png) · [深色模式截图](docs/screenshots/dark.png)
 
-2026-09-09 验证：20 项核心测试、2 条完整 iPhone 操作流程全部通过，iOS Simulator 构建成功；20 个动作的固定版本 GIF 地址均可访问。[查看验证记录](https://github.com/lxyxl0216/Fitness/actions/runs/34335422642)。
+2026-09-09 验证：20 项核心测试、3 条完整 iPhone 操作流程全部通过，包含浅色/深色切换与重启保留；iOS Simulator 构建成功。[查看验证记录](https://github.com/lxyxl0216/Fitness/actions/runs/34340536985)。
 
 ## 当前功能
 

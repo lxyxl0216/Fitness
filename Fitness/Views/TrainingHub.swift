@@ -168,7 +168,7 @@ struct ExerciseLibraryView: View {
                             Text(item).font(.subheadline.weight(.medium)).padding(.horizontal, 14).frame(minHeight: 44)
                                 .foregroundStyle(muscle == item ? Color.white : Palette.muted)
                                 .background(muscle == item ? Palette.button : Palette.surface, in: Capsule())
-                        }.buttonStyle(.plain).accessibilityIdentifier("exerciseCard-\(exercise.id)")
+                        }.buttonStyle(.plain)
                     }
                 }.padding(.horizontal, 20)
             }
@@ -198,7 +198,7 @@ struct ExerciseLibraryView: View {
                                 Text("\(exercise.muscle) / \(exercise.equipment)").font(.caption).foregroundStyle(Palette.muted)
                             }.padding(14).frame(maxWidth: .infinity, alignment: .leading)
                                 .background(Palette.surface, in: RoundedRectangle(cornerRadius: 22))
-                        }.buttonStyle(.plain)
+                        }.buttonStyle(.plain).accessibilityIdentifier("exerciseCard-\(exercise.id)")
                     }
                 }.padding(.horizontal, 20).padding(.bottom, 20)
                 if filtered.isEmpty { ContentUnavailableView.search(text: query) }

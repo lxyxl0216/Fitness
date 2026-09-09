@@ -168,7 +168,7 @@ struct ExerciseLibraryView: View {
                             Text(item).font(.subheadline.weight(.medium)).padding(.horizontal, 14).frame(minHeight: 44)
                                 .foregroundStyle(muscle == item ? Color.white : Palette.muted)
                                 .background(muscle == item ? Palette.button : Palette.surface, in: Capsule())
-                        }.buttonStyle(.plain)
+                        }.buttonStyle(.plain).accessibilityIdentifier("exerciseCard-\(exercise.id)")
                     }
                 }.padding(.horizontal, 20)
             }
@@ -225,7 +225,7 @@ struct ExerciseDetail: View {
     var body: some View {
         Form {
             Section {
-                GIFDemoCard(url: demonstrationURL)
+                GIFDemoCard(url: demonstrationURL).accessibilityIdentifier("gifDemo")
                 LabeledContent("主要部位", value: exercise.muscle)
                 LabeledContent("器械", value: exercise.equipment)
                 Text("重量按固定口径记录。动作质量优先于重量；联网动画只作动作识别参考。")

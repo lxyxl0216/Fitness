@@ -103,8 +103,14 @@ final class FitnessUITests: XCTestCase {
         app.segmentedControls.buttons["动作"].tap()
         XCTAssertTrue(app.staticTexts["杠铃卧推"].waitForExistence(timeout: 10))
         capture("08-动作库")
+        app.buttons["openMuscleAtlas"].tap()
+        XCTAssertTrue(app.otherElements["muscleModel"].waitForExistence(timeout: 10))
+        app.buttons["muscle-背部"].tap()
+        capture("09-3D人体")
+        app.buttons["applyMuscleFilter"].tap()
+        XCTAssertTrue(app.staticTexts["4 个动作"].waitForExistence(timeout: 10))
         app.tabBars.buttons["我的"].tap()
-        capture("09-我的")
+        capture("10-我的")
     }
 
     private func enter(_ value: String, field id: String, in app: XCUIApplication) {

@@ -129,4 +129,14 @@ final class WellnessTests: XCTestCase {
         XCTAssertEqual(profile.restingEnergy(weight: 77), 1718.75)
         XCTAssertEqual(try FitnessStore(url: store.url).wellness.targets?.calories, 2000)
     }
+
+    func testEveryCatalogExerciseHasAStableRemoteDemonstration() throws {
+        XCTAssertEqual(Set(ExerciseCatalog.exercises.map(\.gifPath)).count, ExerciseCatalog.exercises.count)
+        for exercise in ExerciseCatalog.exercises {
+            XCTAssertTrue(exercise.gifPath.hasSuffix(".gif"))
+            XCTAssertEqual(exercise.gifURL.scheme, "https")
+            XCTAssertEqual(exercise.thumbnailURL.scheme, "https")
+        }
+        XCTAssertEqual(Set(ExerciseCatalog.muscles), Set(ExerciseCatalog.exercises.map(\.muscle)))
+    }
 }

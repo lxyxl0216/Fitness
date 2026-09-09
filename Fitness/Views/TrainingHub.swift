@@ -149,9 +149,21 @@ struct ExerciseLibraryView: View {
                 Image(systemName: "magnifyingglass").foregroundStyle(Palette.muted)
                 TextField("搜索动作", text: $query).accessibilityLabel("搜索动作")
             }.padding(13).background(Palette.surface, in: RoundedRectangle(cornerRadius: 12)).padding(.horizontal, 20)
+            NavigationLink { MuscleAtlasView(selectedMuscle: $muscle) } label: {
+                HStack(spacing: 14) {
+                    Image(systemName: "figure.arms.open").font(.title2).foregroundStyle(Palette.accent)
+                        .frame(width: 46, height: 46).background(Palette.accent.opacity(0.08), in: RoundedRectangle(cornerRadius: 14))
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("3D 人体选肌群").font(.headline).foregroundStyle(.primary)
+                        Text("旋转人体，直接选择想练的部位").font(.caption).foregroundStyle(Palette.muted)
+                    }
+                    Spacer()
+                    Image(systemName: "chevron.right").font(.caption).foregroundStyle(Palette.muted)
+                }.padding(14).background(Palette.surface, in: RoundedRectangle(cornerRadius: 18)).contentShape(Rectangle())
+            }.buttonStyle(.plain).padding(.horizontal, 20).accessibilityIdentifier("openMuscleAtlas")
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
-                    ForEach(["全部", "胸部", "背部", "肩部", "腿部", "手臂", "核心"], id: \.self) { item in
+                    ForEach(["全部"] + ExerciseCatalog.muscles, id: \.self) { item in
                         Button { muscle = item } label: {
                             Text(item).font(.subheadline.weight(.medium)).padding(.horizontal, 14).frame(minHeight: 44)
                                 .foregroundStyle(muscle == item ? Color.white : Palette.muted)
@@ -172,10 +184,16 @@ struct ExerciseLibraryView: View {
                     ForEach(filtered) { exercise in
                         NavigationLink { ExerciseDetail(exercise: exercise) } label: {
                             VStack(alignment: .leading, spacing: 14) {
-                                Image(systemName: exercise.equipment == "自重" ? "figure.strengthtraining.functional" : "dumbbell")
-                                    .font(.system(size: 36, weight: .light)).foregroundStyle(Palette.accent)
-                                    .frame(maxWidth: .infinity, minHeight: 66)
-                                    .background(Palette.accent.opacity(0.06), in: RoundedRectangle(cornerRadius: 12))
+                                AsyncImage(url: exercise.thumbnailURL) { phase in
+                                    if let image = phase.image {
+                                        image.resizable().scaledToFit()
+                                    } else {
+                                        Image(systemName: exercise.equipment == "自重" ? "figure.strengthtraining.functional" : "dumbbell")
+                                            .font(.system(size: 34, weight: .light)).foregroundStyle(Palette.accent)
+                                    }
+                                }
+                                .frame(maxWidth: .infinity, minHeight: 90, maxHeight: 90)
+                                .background(Palette.accent.opacity(0.06), in: RoundedRectangle(cornerRadius: 12))
                                 Text(exercise.name).font(.headline).foregroundStyle(Color.primary)
                                 Text("\(exercise.muscle) / \(exercise.equipment)").font(.caption).foregroundStyle(Palette.muted)
                             }.padding(14).frame(maxWidth: .infinity, alignment: .leading)
@@ -184,6 +202,8 @@ struct ExerciseLibraryView: View {
                     }
                 }.padding(.horizontal, 20).padding(.bottom, 20)
                 if filtered.isEmpty { ContentUnavailableView.search(text: query) }
+                Link("动作图片来源与版权说明", destination: URL(string: "https://github.com/JahelCuadrado/ExerciseGymGifsDB")!)
+                    .font(.caption).padding(.bottom, 24)
             }
         }
     }
@@ -196,14 +216,19 @@ struct ExerciseDetail: View {
     @State private var error: String?
     @State private var saved = false
 
+    private var demonstrationURL: URL {
+        if let custom = store.wellness.exerciseLinks[exercise.id],
+           let url = URL(string: custom), url.pathExtension.lowercased() == "gif" { return url }
+        return exercise.gifURL
+    }
+
     var body: some View {
         Form {
             Section {
-                Image(systemName: "figure.strengthtraining.traditional").font(.system(size: 62, weight: .ultraLight))
-                    .foregroundStyle(Palette.accent).frame(maxWidth: .infinity).padding(24)
+                GIFDemoCard(url: demonstrationURL)
                 LabeledContent("主要部位", value: exercise.muscle)
                 LabeledContent("器械", value: exercise.equipment)
-                Text("重量按固定口径记录。动作质量优先于重量；可保存你熟悉的教练演示作为参考。")
+                Text("重量按固定口径记录。动作质量优先于重量；联网动画只作动作识别参考。")
                     .font(.subheadline).foregroundStyle(Palette.muted)
             }
             Section("上次完成") {
@@ -223,6 +248,11 @@ struct ExerciseDetail: View {
                     Link("打开动作演示", destination: url)
                 }
                 if saved { Text("链接已保存").font(.caption).foregroundStyle(Palette.accent) }
+            }
+            Section("外部资源") {
+                Link("GIF 来源：ExerciseGymGifsDB", destination: URL(string: "https://github.com/JahelCuadrado/ExerciseGymGifsDB")!)
+                Text("GIF 按需从第三方网络地址读取，不包含在安装包中。来源仓库声明其不拥有这些图片的版权，正式发布前应替换为已获授权的素材。")
+                    .font(.caption).foregroundStyle(Palette.muted)
             }
         }
         .scrollContentBackground(.hidden).background(Palette.canvas)

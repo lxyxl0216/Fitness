@@ -6,11 +6,11 @@
 
 来自 iPhone 17 Pro 模拟器。截图中的食品、摄入和体重为自动测试数据，首次使用不会预填这些数值。
 
-<img src="docs/screenshots/home.png" width="240" alt="今日营养与训练入口"> <img src="docs/screenshots/exercises.png" width="240" alt="动作筛选"> <img src="docs/screenshots/dark.png" width="240" alt="深色模式">
+<img src="docs/screenshots/home.png" width="240" alt="今日营养与训练入口"> <img src="docs/screenshots/exercise-library.png" width="240" alt="动作库与 3D 人体入口"> <img src="docs/screenshots/muscle-atlas.png" width="240" alt="可交互的 3D 人体肌群导航">
 
-[训练计划截图](docs/screenshots/training.png) · [营养趋势截图](docs/screenshots/trends.png)
+[动作 GIF 演示](docs/screenshots/exercise-gif.png) · [训练计划截图](docs/screenshots/training.png) · [营养趋势截图](docs/screenshots/trends.png) · [深色模式截图](docs/screenshots/dark.png)
 
-2026-09-08 验证：19 项核心测试、2 条 iPhone 操作流程全部通过，iOS 构建成功。[查看验证记录](https://github.com/lxyxl0216/Fitness/actions/runs/34208928957)。
+2026-09-09 验证：20 项核心测试、2 条完整 iPhone 操作流程全部通过，iOS Simulator 构建成功；20 个动作的固定版本 GIF 地址均可访问。[查看验证记录](https://github.com/lxyxl0216/Fitness/actions/runs/34335422642)。
 
 ## 当前功能
 

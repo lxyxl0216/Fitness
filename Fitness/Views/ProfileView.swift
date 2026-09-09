@@ -41,13 +41,23 @@ struct ProfileView: View {
             Surface {
                 VStack(alignment: .leading, spacing: 14) {
                     SectionHeading(title: "界面外观", subtitle: "选择后立即生效，并在下次打开时保留")
-                    Picker("界面外观", selection: $appearance) {
+                    HStack(spacing: 4) {
                         ForEach(AppAppearance.allCases) { mode in
-                            Text(mode.title).tag(mode.rawValue)
+                            let selected = appearance == mode.rawValue
+                            Button { appearance = mode.rawValue } label: {
+                                Label(mode.title, systemImage: mode.symbol)
+                                    .font(.subheadline.weight(.semibold))
+                                    .frame(maxWidth: .infinity, minHeight: 44)
+                                    .foregroundStyle(selected ? Palette.buttonText : Palette.muted)
+                                    .background(selected ? Palette.button : Color.clear, in: Capsule())
+                            }
+                            .buttonStyle(.plain)
+                            .accessibilityIdentifier("appearance-\(mode.rawValue)")
+                            .accessibilityAddTraits(selected ? .isSelected : [])
                         }
                     }
-                    .pickerStyle(.segmented)
-                    .accessibilityIdentifier("appearanceMode")
+                    .padding(4)
+                    .background(Palette.canvas, in: Capsule())
                 }
             }
             Surface {

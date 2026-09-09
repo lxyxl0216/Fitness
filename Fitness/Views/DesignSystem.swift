@@ -8,6 +8,7 @@ enum AppAppearance: String, CaseIterable, Identifiable {
 
     var id: String { rawValue }
     var title: String { self == .light ? "浅色" : "深色" }
+    var symbol: String { self == .light ? "sun.max.fill" : "moon.fill" }
     var colorScheme: ColorScheme { self == .light ? .light : .dark }
 }
 

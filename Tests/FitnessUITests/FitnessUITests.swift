@@ -104,7 +104,7 @@ final class FitnessUITests: XCTestCase {
         XCTAssertTrue(app.staticTexts["杠铃卧推"].waitForExistence(timeout: 10))
         capture("08-动作库")
         app.buttons["openMuscleAtlas"].tap()
-        XCTAssertTrue(app.otherElements["muscleModel"].waitForExistence(timeout: 10))
+        XCTAssertTrue(app.descendants(matching: .any)["muscleModel"].waitForExistence(timeout: 10))
         app.buttons["muscle-背部"].tap()
         capture("09-3D人体")
         app.buttons["applyMuscleFilter"].tap()

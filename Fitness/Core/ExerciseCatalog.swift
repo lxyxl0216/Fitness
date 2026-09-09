@@ -8,8 +8,8 @@ struct Exercise: Identifiable {
     let gifPath: String
 
     private static let mediaBase = URL(string: "https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/")!
-    var gifURL: URL { Self.mediaBase.appending(path: gifPath) }
-    var thumbnailURL: URL { Self.mediaBase.appending(path: gifPath.replacingOccurrences(of: ".gif", with: ".thumb.webp")) }
+    var gifURL: URL { URL(string: Self.mediaBase.absoluteString + gifPath)! }
+    var thumbnailURL: URL { URL(string: Self.mediaBase.absoluteString + gifPath.replacingOccurrences(of: ".gif", with: ".thumb.webp"))! }
 }
 
 enum ExerciseCatalog {
